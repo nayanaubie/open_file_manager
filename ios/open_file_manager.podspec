@@ -13,7 +13,7 @@ A flutter plugin to open default file manager app
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'Aubergine Solutions Pvt. Ltd.' => 'flutterdev@aubergine.co' }
   s.source           = { :path => '.' }
-  s.source_files = 'Classes/**/*'
+  s.source_files = 'open_file_manager/Sources/open_file_manager/**/*.swift'
   s.dependency 'Flutter'
   s.platform = :ios, '12.0'
 
