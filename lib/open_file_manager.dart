@@ -1,5 +1,3 @@
-library;
-
 import 'open_file_manager.dart';
 import 'src/core/open_file_manager_platform_interface.dart';
 

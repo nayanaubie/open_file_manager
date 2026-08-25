@@ -42,33 +42,35 @@ class _HomeScreenState extends State<HomeScreen> {
                 'Select Android Folder Type',
                 style: TextStyle(fontSize: 20),
               ),
-              ListView.builder(
-                itemCount: _androidFolderTypes.length,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                padding: EdgeInsets.symmetric(vertical: 12),
-                itemBuilder:
-                    (context, i) => RadioListTile<AndroidFolderType>(
-                      value: _androidFolderTypes[i],
-                      groupValue: _selectedAndroidFolderType,
-                      title: Text(_androidFolderTypes[i].name.capitalize()),
-                      onChanged: (folderType) {
-                        if (folderType != _selectedAndroidFolderType) {
-                          setState(
-                            () =>
-                                _selectedAndroidFolderType =
-                                    folderType ?? _selectedAndroidFolderType,
-                          );
-                        }
-                      },
-                    ),
+              RadioGroup<AndroidFolderType>(
+                groupValue: _selectedAndroidFolderType,
+                onChanged: (folderType) {
+                  if (folderType != _selectedAndroidFolderType) {
+                    setState(
+                      () =>
+                          _selectedAndroidFolderType =
+                              folderType ?? _selectedAndroidFolderType,
+                    );
+                  }
+                },
+                child: ListView.builder(
+                  itemCount: _androidFolderTypes.length,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  itemBuilder:
+                      (context, i) => RadioListTile<AndroidFolderType>(
+                        value: _androidFolderTypes[i],
+                        title: Text(_androidFolderTypes[i].name.capitalize()),
+                      ),
+                ),
               ),
             ],
             if (_selectedAndroidFolderType == AndroidFolderType.other ||
                 Platform.isIOS) ...[
               Text(
                 'Write ${Platform.operatingSystem} folder path below ${Platform.isIOS ? '(optional)' : ''}:',
-                style: TextStyle(fontSize: 20),
+                style: const TextStyle(fontSize: 20),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 12),
