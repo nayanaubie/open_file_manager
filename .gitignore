@@ -5,16 +5,18 @@
 *.swp
 .DS_Store
 .atom/
+.build/
 .buildlog/
 .history
 .svn/
+.swiftpm/
 migrate_working_dir/
 
 # IntelliJ related
 *.iml
 *.ipr
 *.iws
-.idea/
+.idea/*
 
 # The .vscode folder contains launch configuration and tasks you configure in
 # VS Code which you may wish to be included in version control, so this line
@@ -26,5 +28,9 @@ migrate_working_dir/
 /pubspec.lock
 **/doc/api/
 .dart_tool/
-.packages
-build/
+.flutter-plugins-dependencies
+/build/
+/coverage/
+
+# Exclude files and folders from the above rules for intellij.
+!.idea/runConfigurations/
