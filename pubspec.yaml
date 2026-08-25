@@ -2,8 +2,8 @@ name: open_file_manager
 description: A flutter plugin to open default file manager app. on an Android, it opens Download/Recent folder on file manager app. on iOS, it opens app's document folder in Files app.
 version: 2.0.1
 homepage: https://aubergine.co
-repository: https://github.com/nayanAubie/open_file_manager
-issue_tracker: https://github.com/nayanAubie/open_file_manager/issues
+repository: https://github.com/nayanaubie/open_file_manager
+issue_tracker: https://github.com/nayanaubie/open_file_manager/issues
 
 environment:
   sdk: ^3.7.0
@@ -15,7 +15,7 @@ dependencies:
   plugin_platform_interface: ^2.1.8
 
 dev_dependencies:
-  flutter_lints: ^5.0.0
+  flutter_lints: ^6.0.0
   flutter_test:
     sdk: flutter
 
