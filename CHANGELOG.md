@@ -1,3 +1,6 @@
+## 2.1.0
+- Added support of Swift Package Manager (SPM) in iOS.
+
 ## 2.0.2
 - Migration to `Built-in-Kotlin` for Android plugin.
 - Fixed deprecated code in the example app.
