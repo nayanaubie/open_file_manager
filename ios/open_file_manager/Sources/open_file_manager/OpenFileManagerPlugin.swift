@@ -19,31 +19,64 @@ public class OpenFileManagerPlugin: NSObject, FlutterPlugin {
     ) {
         switch call.method {
         case "openFileManager":
-            let dict = call.arguments as? NSDictionary
-            let folderPath = dict?["folderPath"] as? String? ?? nil
+            let arguments = call.arguments as? [String: Any]
+            let folderPath = arguments?["folderPath"] as? String
             openFileManager(result: result, folderPath: folderPath)
         default:
             result(FlutterMethodNotImplemented)
         }
-        guard call.method == "openFileManager" else {
-            result(FlutterMethodNotImplemented)
-            return
-        }
     }
 
-    /// Opens the Files app using UIApplication.
+    /// Opens the app's Documents folder or one of its sub-folders.
+    ///
+    /// On iPhone/iPad this opens the Files app. On an Apple-silicon Mac the app
+    /// runs as a "Designed for iPad" app, where the Files URL scheme does not
+    /// exist, so a `file://` URL is handed to LaunchServices which opens Finder.
+    ///
     /// - Parameters:
     ///   - result: Result of the method call.
-    ///   - folderPath: Sub-folder path receveid from Dart.
+    ///   - folderPath: Sub-folder path received from Dart.
     func openFileManager(result: @escaping FlutterResult, folderPath: String?) {
-        let paths = FileManager.default.urls(
-            for: .documentDirectory, in: .userDomainMask)
+        let documents = FileManager.default.urls(
+            for: .documentDirectory, in: .userDomainMask)[0]
 
-        var documentProviderPath = paths[0].absoluteString.replacingOccurrences(
-            of: "file://", with: "shareddocuments://")
-        documentProviderPath.append(folderPath ?? "")
+        // iOS/iPadOS app running on an Apple-silicon Mac ("Designed for iPad").
+        // `shareddocuments://` only exists in the iOS runtime, so hand a real
+        // `file://` URL to LaunchServices; Finder is the default handler for
+        // folders on macOS. Only paths inside the app's own container can be
+        // opened because the app is sandboxed.
+        if #available(iOS 14.0, *), ProcessInfo.processInfo.isiOSAppOnMac {
+            var folder = documents
+            if let folderPath = folderPath, !folderPath.isEmpty {
+                folder.appendPathComponent(folderPath, isDirectory: true)
+            }
+            UIApplication.shared.open(folder, options: [:]) { success in
+                result(success)
+            }
+            return
+        }
 
-        UIApplication.shared.open(URL(string: documentProviderPath)!)
-        result(true)
+        // iPhone/iPad: open the Files app.
+        // Use the absolute path (not file:// URL) with shareddocuments:// scheme.
+        // Per Apple's undocumented scheme: shareddocuments://<absolute-path>
+        var documentProviderPath = "shareddocuments://\(documents.path)"
+        if let folderPath = folderPath, !folderPath.isEmpty {
+            let encoded = folderPath.addingPercentEncoding(
+                withAllowedCharacters: .urlPathAllowed) ?? folderPath
+            documentProviderPath.append("/\(encoded)")
+        }
+
+        guard let url = URL(string: documentProviderPath) else {
+            result(
+                FlutterError(
+                    code: "invalid_url",
+                    message: "Unable to build a documents URL",
+                    details: documentProviderPath))
+            return
+        }
+
+        UIApplication.shared.open(url) { success in
+            result(success)
+        }
     }
 }
