@@ -57,13 +57,13 @@ public class OpenFileManagerPlugin: NSObject, FlutterPlugin {
         }
 
         // iPhone/iPad: open the Files app.
-        // Use the absolute path (not file:// URL) with shareddocuments:// scheme.
-        // Per Apple's undocumented scheme: shareddocuments://<absolute-path>
-        var documentProviderPath = "shareddocuments://\(documents.path)"
+        // Keep the original URL construction: replace file:// with shareddocuments://
+        var documentProviderPath = documents.absoluteString.replacingOccurrences(
+            of: "file://", with: "shareddocuments://")
         if let folderPath = folderPath, !folderPath.isEmpty {
-            let encoded = folderPath.addingPercentEncoding(
-                withAllowedCharacters: .urlPathAllowed) ?? folderPath
-            documentProviderPath.append("/\(encoded)")
+            documentProviderPath.append(
+                folderPath.addingPercentEncoding(
+                    withAllowedCharacters: .urlPathAllowed) ?? folderPath)
         }
 
         guard let url = URL(string: documentProviderPath) else {
